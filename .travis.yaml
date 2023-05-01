@@ -1,0 +1,22 @@
+sudo: required
+language: node_js
+node_js:
+  - 16
+services:
+  - docker
+before_install:
+  - docker build -t jason8746/node:1.0 -f Dockerfile.dev .
+script:
+  - docker run -e CI=true jason8746/node:1.0 npm run test -- --coverage --watchAll=false
+
+deploy:
+  provider: elasticbeanstalk
+  region: "ap-southeast-2"
+  app: "my-react-app" ### Your EB App name
+  env: "my-react-app-env" ### Your EB App environment name
+  bucket_name: "elasticbeanstalk-us-east-1-780390497435" ### S3 bucket name
+  bucket_path: "EBApptest" ### S3 folder name under S3 bucket above
+  on:
+    branch: main
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_KEY"
