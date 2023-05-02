@@ -78,4 +78,3 @@ http://react-app-travis-env-1.eba-bvrtsetk.ap-southeast-2.elasticbeanstalk.com/
 
 ![image](images/Screenshot%202023-05-02%20at%2011.47.13%20am.png)
 
-#finished!
