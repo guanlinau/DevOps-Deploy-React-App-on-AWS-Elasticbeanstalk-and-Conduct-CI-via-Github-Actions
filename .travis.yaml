@@ -11,7 +11,7 @@ script:
 
 deploy:
   provider: elasticbeanstalk
-  region: "ap-southeast-1"
+  region: "ap-southeast-2"
   app: "react-app-travis" ### Your EB App name
   env: "React-app-travis-env-1" ### Your EB App environment name
   bucket_name: "elasticbeanstalk-ap-southeast-2-044530424430" ### S3 bucket name
