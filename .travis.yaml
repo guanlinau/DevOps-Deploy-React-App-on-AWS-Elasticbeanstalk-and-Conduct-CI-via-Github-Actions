@@ -13,7 +13,7 @@ deploy:
   provider: elasticbeanstalk
   region: "ap-southeast-1"
   app: "react-app-travis" ### Your EB App name
-  env: "React-app-travis-env" ### Your EB App environment name
+  env: "React-app-travis-env-1" ### Your EB App environment name
   bucket_name: "elasticbeanstalk-ap-southeast-2-044530424430" ### S3 bucket name
   bucket_path: "travis-ela" ### S3 folder name under S3 bucket above
   on:
