@@ -1,6 +1,4 @@
-# Getting Started with Create React App
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+# DevOps-Deploy-React-App-on-AWS-Elasticbeanstalk-and-Conduct-CI-via-Travis
 
 ## Available Scripts
 
@@ -8,63 +6,64 @@ In the project directory, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
+Runs the app in the development mode locally.\
 Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
-
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
 
 ### `npm test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Runs the test locally
 
-### `npm run build`
+### Usage instruction
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+###### Create react app
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+###### Create Dockerfile.dev for dev environment
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+###### Create Dockerfile for pro environment
 
-### `npm run eject`
+###### Create a elastic beanstalk in aws with default configuration
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+###### Create a travis user with least privilege and download the access_key / secret_id
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+![image](images/Screenshot%202023-05-02%20at%2011.36.51%20am.png)
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+###### Create a folder inside the s3 bucket created by elastic beanstalk to store build file
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+###### Create travis.yml with related configuration from elastic beanstalk
 
-## Learn More
+```
+sudo: required
+language: node_js
+node_js:
+  - 16
+services:
+  - docker
+before_install:
+  - docker build -t jason8746/node:1.0 -f Dockerfile.dev .
+script:
+  - docker run -e CI=true jason8746/node:1.0 npm run test -- --coverage --watchAll=false
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+deploy:
+  provider: elasticbeanstalk
+  region: "ap-southeast-2"
+  app: "react-app-travis" ### Your EB App name
+  env: "React-app-travis-env-1" ### Your EB App environment name
+  bucket_name: "elasticbeanstalk-ap-southeast-2-044530424430" ### S3 bucket name
+  bucket_path: "travis-ela" ### S3 folder name under S3 bucket above
+  on:
+    branch: master
+  access_key_id: "$AWS_ACCESS_KEY"
+  secret_access_key: "$AWS_SECRET_KEY"
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+###### Commit the code into github repo
 
-### Code Splitting
+###### Add the repo into travis
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+###### configure the env variables needed in the travis.yml to assign travis get access to elastic beanstalk and ec2
 
-### Analyzing the Bundle Size
+![iamge](images//Screenshot%202023-05-02%20at%2011.41.23%20am.png)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+###### Trigger build in Travis
 
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+![iamge](images/Screenshot%202023-05-02%20at%2011.16.55%20am.png)
