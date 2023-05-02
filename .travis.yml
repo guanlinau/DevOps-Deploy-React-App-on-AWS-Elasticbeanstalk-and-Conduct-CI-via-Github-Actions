@@ -4,9 +4,13 @@ node_js:
   - 16
 services:
   - docker
+cache:
+  directories:
+    - node_modules
 before_install:
   - docker build -t jason8746/node:2.0 -f Dockerfile .
 script:
+  - npm run test
   - docker run -e CI=true jason8746/node:2.0 npm run test -- --coverage --watchAll=false
 
 deploy:
