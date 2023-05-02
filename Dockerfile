@@ -7,6 +7,7 @@ RUN npm run build
 
 FROM nginx
 # The image needs nginx to run on aws
+RUN apt-get update && apt-get install -y npm
 EXPOSE 80
 COPY --from=builder /app/build /usr/share/nginx/html
 # Copy the content of the builder step, move the contents of build folder into the html folder in this nginx container
