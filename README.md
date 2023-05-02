@@ -29,6 +29,8 @@ Runs the test locally
 
 ###### Create a folder inside the s3 bucket created by elastic beanstalk to store build file
 
+#configure the bucket permissions to allow public access and enable ACLs
+
 ###### Create travis.yml with related configuration from elastic beanstalk
 
 ```
@@ -67,3 +69,11 @@ deploy:
 ###### Trigger build in Travis
 
 ![iamge](images/Screenshot%202023-05-02%20at%2011.16.55%20am.png)
+
+###### Browser the react app via domain name
+
+```
+http://react-app-travis-env-1.eba-bvrtsetk.ap-southeast-2.elasticbeanstalk.com/
+```
+
+![image](images/Screenshot%202023-05-02%20at%2011.47.13%20am.png)
