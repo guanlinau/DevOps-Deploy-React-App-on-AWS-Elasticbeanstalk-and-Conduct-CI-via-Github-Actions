@@ -2,7 +2,7 @@ name: Deploy to Elastic Beanstalk
 
 on:
   pull_request:
-    types: [closed]
+    # types: [closed]
 
 jobs:
   deploy:
@@ -35,7 +35,7 @@ jobs:
           aws elasticbeanstalk create-application-version \
             --application-name react-app \
             --version-label ${{ github.sha }} \
-            --source-bundle S3Bucket="elasticbeanstalk-ap-southeast-2-482739392776",S3Key="deploy_package.zip"
+            --source-bundle S3Bucket="s3://elasticbeanstalk-ap-southeast-2-044530424430",S3Key="deploy_package.zip"
 
           aws elasticbeanstalk update-environment \
             --environment-name React-app-env \
