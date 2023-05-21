@@ -19,7 +19,7 @@ jobs:
           node-version: 16
 
       - name: Build Docker image
-        run: docker build -t yuwangjr/sample-app -f Dockerfile.dev .
+        run: docker build -t jason8746/sample-app -f Dockerfile.dev .
 
       - name: Run tests
-        run: docker run -e CI=true yuwangjr/sample-app npm run test -- --coverage --watchAll=false
+        run: docker run -e CI=true jason8746/sample-app npm run test -- --coverage --watchAll=false
