@@ -31,31 +31,52 @@ Runs the test locally
 
 #configure the bucket permissions to allow public access and enable ACLs
 
-###### Create travis.yml with related configuration from elastic beanstalk
+###### Create cd.yml with related configuration from elastic beanstalk
 
 ```
-sudo: required
-language: node_js
-node_js:
-  - 16
-services:
-  - docker
-before_install:
-  - docker build -t jason8746/node:1.0 -f Dockerfile.dev .
-script:
-  - docker run -e CI=true jason8746/node:1.0 npm run test -- --coverage --watchAll=false
+name: Deploy to Elastic Beanstalk
 
-deploy:
-  provider: elasticbeanstalk
-  region: "ap-southeast-2"
-  app: "react-app-travis" ### Your EB App name
-  env: "React-app-travis-env-1" ### Your EB App environment name
-  bucket_name: "elasticbeanstalk-ap-southeast-2-044530424430" ### S3 bucket name
-  bucket_path: "travis-ela" ### S3 folder name under S3 bucket above
-  on:
-    branch: master
-  access_key_id: "$AWS_ACCESS_KEY"
-  secret_access_key: "$AWS_SECRET_KEY"
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Create ZIP deployment package
+        run: zip -r deploy_package.zip ./
+
+      - name: Install AWS CLI
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y python3-pip
+          pip3 install --user awscli
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-southeast-2
+
+      - name: Upload package to S3 bucket
+        run: aws s3 cp deploy_package.zip s3://elasticbeanstalk-ap-southeast-2-044530424430
+
+      - name: Deploy to Elastic Beanstalk
+        run: |
+          aws elasticbeanstalk create-application-version \
+            --application-name react-app \
+            --version-label ${{ github.sha }} \
+            --source-bundle S3Bucket="elasticbeanstalk-ap-southeast-2-482739392776",S3Key="deploy_package.zip"
+
+          aws elasticbeanstalk update-environment \
+            --environment-name React-app-env \
+            --version-label ${{ github.sha }}
+
 ```
 
 ###### Commit the code into github repo
@@ -77,4 +98,3 @@ http://react-app-travis-env-1.eba-bvrtsetk.ap-southeast-2.elasticbeanstalk.com/
 ```
 
 ![image](images/Screenshot%202023-05-02%20at%2011.47.13%20am.png)
-
